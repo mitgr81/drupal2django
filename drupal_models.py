@@ -18,903 +18,911 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.'''
 
-from django.db import models
-
-class Access(models.Model):
-    aid = models.IntegerField(primary_key=True)
-    mask = models.CharField(max_length=765)
-    type = models.CharField(max_length=765)
-    status = models.IntegerField()
-    class Meta:
-        db_table = u'access'
-
-class Accesslog(models.Model):
-    aid = models.IntegerField(primary_key=True)
-    sid = models.CharField(max_length=192)
-    title = models.CharField(max_length=765, blank=True)
-    path = models.CharField(max_length=765, blank=True)
-    url = models.CharField(max_length=765, blank=True)
-    hostname = models.CharField(max_length=384, blank=True)
-    uid = models.IntegerField(null=True, blank=True)
-    timer = models.IntegerField()
-    timestamp = models.IntegerField()
-    class Meta:
-        db_table = u'accesslog'
-
-class Actions(models.Model):
-    aid = models.CharField(max_length=765, primary_key=True)
-    type = models.CharField(max_length=96)
-    callback = models.CharField(max_length=765)
-    parameters = models.TextField()
-    description = models.CharField(max_length=765)
-    class Meta:
-        db_table = u'actions'
-
-class ActionsAid(models.Model):
-    aid = models.IntegerField(primary_key=True)
-    class Meta:
-        db_table = u'actions_aid'
-
-class AdvancedHelpIndex(models.Model):
-    sid = models.IntegerField(primary_key=True)
-    module = models.CharField(max_length=765)
-    topic = models.CharField(max_length=765)
-    language = models.CharField(max_length=36)
-    class Meta:
-        db_table = u'advanced_help_index'
-
-class AggregatorCategory(models.Model):
-    cid = models.IntegerField(primary_key=True)
-    title = models.CharField(unique=True, max_length=765)
-    description = models.TextField()
-    block = models.IntegerField()
-    class Meta:
-        db_table = u'aggregator_category'
-
-class AggregatorCategoryFeed(models.Model):
-    fid = models.IntegerField()
-    cid = models.IntegerField(primary_key=True)
-    class Meta:
-        db_table = u'aggregator_category_feed'
-
-class AggregatorCategoryItem(models.Model):
-    iid = models.IntegerField()
-    cid = models.IntegerField(primary_key=True)
-    class Meta:
-        db_table = u'aggregator_category_item'
-
-class AggregatorFeed(models.Model):
-    fid = models.IntegerField(primary_key=True)
-    title = models.CharField(unique=True, max_length=765)
-    url = models.CharField(unique=True, max_length=765)
-    refresh = models.IntegerField()
-    checked = models.IntegerField()
-    link = models.CharField(max_length=765)
-    description = models.TextField()
-    image = models.TextField()
-    etag = models.CharField(max_length=765)
-    modified = models.IntegerField()
-    block = models.IntegerField()
-    class Meta:
-        db_table = u'aggregator_feed'
-
-class AggregatorItem(models.Model):
-    iid = models.IntegerField(primary_key=True)
-    fid = models.IntegerField()
-    title = models.CharField(max_length=765)
-    link = models.CharField(max_length=765)
-    author = models.CharField(max_length=765)
-    description = models.TextField()
-    timestamp = models.IntegerField(null=True, blank=True)
-    guid = models.CharField(max_length=765, blank=True)
-    class Meta:
-        db_table = u'aggregator_item'
-
-class Authmap(models.Model):
-    aid = models.IntegerField(primary_key=True)
-    uid = models.IntegerField()
-    authname = models.CharField(unique=True, max_length=384)
-    module = models.CharField(max_length=384)
-    class Meta:
-        db_table = u'authmap'
-
-class Batch(models.Model):
-    bid = models.IntegerField(primary_key=True)
-    token = models.CharField(max_length=192)
-    timestamp = models.IntegerField()
-    batch = models.TextField(blank=True)
-    class Meta:
-        db_table = u'batch'
-
-class Blocks(models.Model):
-    bid = models.IntegerField(primary_key=True)
-    module = models.CharField(max_length=192)
-    delta = models.CharField(unique=True, max_length=96)
-    theme = models.CharField(max_length=192)
-    status = models.IntegerField()
-    weight = models.IntegerField()
-    region = models.CharField(max_length=192)
-    custom = models.IntegerField()
-    throttle = models.IntegerField()
-    visibility = models.IntegerField()
-    pages = models.TextField()
-    title = models.CharField(max_length=192)
-    cache = models.IntegerField()
-    class Meta:
-        db_table = u'blocks'
-
-class BlocksRoles(models.Model):
-    module = models.CharField(max_length=192, primary_key=True)
-    delta = models.CharField(max_length=96, primary_key=True)
-    rid = models.IntegerField()
-    class Meta:
-        db_table = u'blocks_roles'
-
-class BlogapiFiles(models.Model):
-    fid = models.IntegerField(primary_key=True)
-    uid = models.IntegerField()
-    filepath = models.CharField(max_length=765)
-    filesize = models.IntegerField()
-    class Meta:
-        db_table = u'blogapi_files'
-
-class Boxes(models.Model):
-    bid = models.IntegerField(primary_key=True)
-    body = models.TextField(blank=True)
-    info = models.CharField(unique=True, max_length=384)
-    format = models.IntegerField()
-    class Meta:
-        db_table = u'boxes'
-
-class Cache(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache'
-
-class CacheAdminMenu(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_admin_menu'
-
-class CacheBlock(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_block'
-
-class CacheContent(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_content'
-
-class CacheFilter(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_filter'
-
-class CacheForm(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_form'
-
-class CacheMenu(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_menu'
-
-class CachePage(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_page'
-
-class CacheUpdate(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_update'
-
-class CacheViews(models.Model):
-    cid = models.CharField(max_length=765, primary_key=True)
-    data = models.TextField(blank=True)
-    expire = models.IntegerField()
-    created = models.IntegerField()
-    headers = models.TextField(blank=True)
-    serialized = models.IntegerField()
-    class Meta:
-        db_table = u'cache_views'
-
-class Comments(models.Model):
-    cid = models.IntegerField(primary_key=True)
-    pid = models.IntegerField()
-    nid = models.IntegerField()
-    uid = models.IntegerField()
-    subject = models.CharField(max_length=192)
-    comment = models.TextField()
-    hostname = models.CharField(max_length=384)
-    timestamp = models.IntegerField()
-    status = models.IntegerField()
-    format = models.IntegerField()
-    thread = models.CharField(max_length=765)
-    name = models.CharField(max_length=180, blank=True)
-    mail = models.CharField(max_length=192, blank=True)
-    homepage = models.CharField(max_length=765, blank=True)
-    class Meta:
-        db_table = u'comments'
-
-class Contact(models.Model):
-    cid = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=765)
-    recipients = models.TextField()
-    reply = models.TextField()
-    weight = models.IntegerField()
-    selected = models.IntegerField()
-    class Meta:
-        db_table = u'contact'
-
-class ContentNodeField(models.Model):
-    field_name = models.CharField(max_length=96, primary_key=True)
-    type = models.CharField(max_length=381)
-    global_settings = models.TextField()
-    required = models.IntegerField()
-    multiple = models.IntegerField()
-    db_storage = models.IntegerField()
-    module = models.CharField(max_length=381)
-    db_columns = models.TextField()
-    active = models.IntegerField()
-    locked = models.IntegerField()
-    class Meta:
-        db_table = u'content_node_field'
-
-class ContentNodeFieldInstance(models.Model):
-    field_name = models.CharField(max_length=96, primary_key=True)
-    type_name = models.CharField(max_length=96, primary_key=True)
-    weight = models.IntegerField()
-    label = models.CharField(max_length=765)
-    widget_type = models.CharField(max_length=96)
-    widget_settings = models.TextField()
-    display_settings = models.TextField()
-    description = models.TextField()
-    widget_module = models.CharField(max_length=381)
-    widget_active = models.IntegerField()
-    class Meta:
-        db_table = u'content_node_field_instance'
-
-class ContentTypeProject(models.Model):
-    vid = models.IntegerField(primary_key=True)
-    nid = models.IntegerField()
-    field_link_url = models.CharField(max_length=765, blank=True)
-    field_link_title = models.CharField(max_length=765, blank=True)
-    field_link_attributes = models.TextField(blank=True)
-    field_source_url = models.CharField(max_length=765, blank=True)
-    field_source_title = models.CharField(max_length=765, blank=True)
-    field_source_attributes = models.TextField(blank=True)
-    class Meta:
-        db_table = u'content_type_project'
-
-class DevelQueries(models.Model):
-    qid = models.IntegerField()
-    function = models.CharField(max_length=765)
-    query = models.TextField()
-    hash = models.CharField(max_length=765, primary_key=True)
-    class Meta:
-        db_table = u'devel_queries'
-
-class DevelTimes(models.Model):
-    tid = models.IntegerField(primary_key=True)
-    qid = models.IntegerField()
-    time = models.FloatField(null=True, blank=True)
-    class Meta:
-        db_table = u'devel_times'
-
-class Feedburner(models.Model):
-    path = models.CharField(max_length=384, primary_key=True)
-    feedburner = models.CharField(max_length=300)
-    class Meta:
-        db_table = u'feedburner'
-
-class Files(models.Model):
-    fid = models.IntegerField(primary_key=True)
-    uid = models.IntegerField()
-    filename = models.CharField(max_length=765)
-    filepath = models.CharField(max_length=765)
-    filemime = models.CharField(max_length=765)
-    filesize = models.IntegerField()
-    status = models.IntegerField()
-    timestamp = models.IntegerField()
-    class Meta:
-        db_table = u'files'
-
-class FilterFormats(models.Model):
-    format = models.IntegerField(primary_key=True)
-    name = models.CharField(unique=True, max_length=765)
-    roles = models.CharField(max_length=765)
-    cache = models.IntegerField()
-    class Meta:
-        db_table = u'filter_formats'
-
-class Filters(models.Model):
-    fid = models.IntegerField(primary_key=True)
-    format = models.IntegerField()
-    module = models.CharField(max_length=192)
-    delta = models.IntegerField()
-    weight = models.IntegerField()
-    class Meta:
-        db_table = u'filters'
-
-class Flood(models.Model):
-    fid = models.IntegerField(primary_key=True)
-    event = models.CharField(max_length=192)
-    hostname = models.CharField(max_length=384)
-    timestamp = models.IntegerField()
-    class Meta:
-        db_table = u'flood'
-
-class History(models.Model):
-    uid = models.IntegerField(primary_key=True)
-    nid = models.IntegerField()
-    timestamp = models.IntegerField()
-    class Meta:
-        db_table = u'history'
-
-class Image(models.Model):
-    nid = models.IntegerField()
-    fid = models.IntegerField()
-    image_size = models.CharField(max_length=96)
-    class Meta:
-        db_table = u'image'
-
-class ImageAttach(models.Model):
-    nid = models.IntegerField()
-    iid = models.IntegerField()
-    class Meta:
-        db_table = u'image_attach'
-
-class Languages(models.Model):
-    language = models.CharField(max_length=36, primary_key=True)
-    name = models.CharField(max_length=192)
-    native = models.CharField(max_length=192)
-    direction = models.IntegerField()
-    enabled = models.IntegerField()
-    plurals = models.IntegerField()
-    formula = models.CharField(max_length=384)
-    domain = models.CharField(max_length=384)
-    prefix = models.CharField(max_length=384)
-    weight = models.IntegerField()
-    javascript = models.CharField(max_length=96)
-    class Meta:
-        db_table = u'languages'
-
-class LocalesSource(models.Model):
-    lid = models.IntegerField(primary_key=True)
-    location = models.CharField(max_length=765)
-    textgroup = models.CharField(max_length=765)
-    source = models.TextField()
-    version = models.CharField(max_length=60)
-    class Meta:
-        db_table = u'locales_source'
-
-class LocalesTarget(models.Model):
-    lid = models.IntegerField()
-    translation = models.TextField()
-    language = models.CharField(max_length=36, primary_key=True)
-    plid = models.IntegerField()
-    plural = models.IntegerField()
-    class Meta:
-        db_table = u'locales_target'
-
-class MenuCustom(models.Model):
-    menu_name = models.CharField(max_length=96, primary_key=True)
-    title = models.CharField(max_length=765)
-    description = models.TextField(blank=True)
-    class Meta:
-        db_table = u'menu_custom'
-
-class MenuLinks(models.Model):
-    menu_name = models.CharField(max_length=96)
-    mlid = models.IntegerField(primary_key=True)
-    plid = models.IntegerField()
-    link_path = models.CharField(max_length=765)
-    router_path = models.CharField(max_length=765)
-    link_title = models.CharField(max_length=765)
-    options = models.TextField(blank=True)
-    module = models.CharField(max_length=765)
-    hidden = models.IntegerField()
-    external = models.IntegerField()
-    has_children = models.IntegerField()
-    expanded = models.IntegerField()
-    weight = models.IntegerField()
-    depth = models.IntegerField()
-    customized = models.IntegerField()
-    p1 = models.IntegerField()
-    p2 = models.IntegerField()
-    p3 = models.IntegerField()
-    p4 = models.IntegerField()
-    p5 = models.IntegerField()
-    p6 = models.IntegerField()
-    p7 = models.IntegerField()
-    p8 = models.IntegerField()
-    p9 = models.IntegerField()
-    updated = models.IntegerField()
-    class Meta:
-        db_table = u'menu_links'
-
-class MenuRouter(models.Model):
-    path = models.CharField(max_length=765, primary_key=True)
-    load_functions = models.CharField(max_length=765)
-    to_arg_functions = models.CharField(max_length=765)
-    access_callback = models.CharField(max_length=765)
-    access_arguments = models.TextField(blank=True)
-    page_callback = models.CharField(max_length=765)
-    page_arguments = models.TextField(blank=True)
-    fit = models.IntegerField()
-    number_parts = models.IntegerField()
-    tab_parent = models.CharField(max_length=765)
-    tab_root = models.CharField(max_length=765)
-    title = models.CharField(max_length=765)
-    title_callback = models.CharField(max_length=765)
-    title_arguments = models.CharField(max_length=765)
-    type = models.IntegerField()
-    block_callback = models.CharField(max_length=765)
-    description = models.TextField()
-    position = models.CharField(max_length=765)
-    weight = models.IntegerField()
-    file = models.TextField(blank=True)
-    class Meta:
-        db_table = u'menu_router'
-
-class Node(models.Model):
-    nid = models.IntegerField()
-    vid = models.IntegerField(unique=True)
-    type = models.CharField(max_length=96)
-    language = models.CharField(max_length=36)
-    title = models.CharField(max_length=765)
-    uid = models.IntegerField()
-    status = models.IntegerField()
-    created = models.IntegerField()
-    changed = models.IntegerField()
-    comment = models.IntegerField()
-    promote = models.IntegerField()
-    moderate = models.IntegerField()
-    sticky = models.IntegerField()
-    tnid = models.IntegerField()
-    translate = models.IntegerField()
-    class Meta:
-        db_table = u'node'
-
-class NodeAccess(models.Model):
-    nid = models.IntegerField(primary_key=True)
-    gid = models.IntegerField(primary_key=True)
-    realm = models.CharField(max_length=765, primary_key=True)
-    grant_view = models.IntegerField()
-    grant_update = models.IntegerField()
-    grant_delete = models.IntegerField()
-    class Meta:
-        db_table = u'node_access'
-
-class NodeCommentStatistics(models.Model):
-    nid = models.IntegerField(primary_key=True)
-    last_comment_timestamp = models.IntegerField()
-    last_comment_name = models.CharField(max_length=180, blank=True)
-    last_comment_uid = models.IntegerField()
-    comment_count = models.IntegerField()
-    class Meta:
-        db_table = u'node_comment_statistics'
-
-class NodeCounter(models.Model):
-    nid = models.IntegerField(primary_key=True)
-    totalcount = models.IntegerField()
-    daycount = models.IntegerField()
-    timestamp = models.IntegerField()
-    class Meta:
-        db_table = u'node_counter'
-
-class NodeRevisions(models.Model):
-    nid = models.IntegerField()
-    vid = models.IntegerField(primary_key=True)
-    uid = models.IntegerField()
-    title = models.CharField(max_length=765)
-    body = models.TextField()
-    teaser = models.TextField()
-    log = models.TextField()
-    timestamp = models.IntegerField()
-    format = models.IntegerField()
-    class Meta:
-        db_table = u'node_revisions'
-
-class NodeType(models.Model):
-    type = models.CharField(max_length=96, primary_key=True)
-    name = models.CharField(max_length=765)
-    module = models.CharField(max_length=765)
-    description = models.TextField()
-    help = models.TextField()
-    has_title = models.IntegerField()
-    title_label = models.CharField(max_length=765)
-    has_body = models.IntegerField()
-    body_label = models.CharField(max_length=765)
-    min_word_count = models.IntegerField()
-    custom = models.IntegerField()
-    modified = models.IntegerField()
-    locked = models.IntegerField()
-    orig_type = models.CharField(max_length=765)
-    class Meta:
-        db_table = u'node_type'
-
-class NodewordsAttributes(models.Model):
-    attid = models.IntegerField(primary_key=True)
-    tagid = models.IntegerField()
-    name = models.CharField(max_length=96)
-    value = models.CharField(max_length=384)
-    weight = models.IntegerField()
-    class Meta:
-        db_table = u'nodewords_attributes'
-
-class NodewordsContentNode(models.Model):
-    tagid = models.IntegerField(primary_key=True)
-    nid = models.IntegerField()
-    vid = models.IntegerField(primary_key=True)
-    delta = models.IntegerField()
-    value = models.TextField()
-    class Meta:
-        db_table = u'nodewords_content_node'
-
-class NodewordsDefaults(models.Model):
-    tagid = models.IntegerField(primary_key=True)
-    context = models.CharField(max_length=192, primary_key=True)
-    value = models.TextField()
-    enabled = models.IntegerField()
-    editable = models.IntegerField()
-    class Meta:
-        db_table = u'nodewords_defaults'
-
-class NodewordsTags(models.Model):
-    tagid = models.IntegerField(primary_key=True)
-    type = models.CharField(max_length=48)
-    name = models.CharField(max_length=96)
-    description = models.CharField(max_length=384, blank=True)
-    widget = models.CharField(max_length=48)
-    widget_options = models.TextField(blank=True)
-    options = models.TextField(blank=True)
-    weight = models.IntegerField()
-    class Meta:
-        db_table = u'nodewords_tags'
-
-class PageTitle(models.Model):
-    nid = models.IntegerField(primary_key=True)
-    page_title = models.CharField(max_length=765)
-    class Meta:
-        db_table = u'page_title'
-
-class Permission(models.Model):
-    pid = models.IntegerField(primary_key=True)
-    rid = models.IntegerField()
-    perm = models.TextField(blank=True)
-    tid = models.IntegerField()
-    class Meta:
-        db_table = u'permission'
-
-class PluginManagerQueue(models.Model):
-    short_name = models.CharField(max_length=765, primary_key=True)
-    class Meta:
-        db_table = u'plugin_manager_queue'
-
-class PluginManagerRepository(models.Model):
-    title = models.CharField(max_length=765)
-    short_name = models.CharField(max_length=765, primary_key=True)
-    links = models.CharField(max_length=765, blank=True)
-    class Meta:
-        db_table = u'plugin_manager_repository'
-
-class PluginManagerTaxonomy(models.Model):
-    short_name = models.CharField(max_length=765)
-    tag = models.CharField(max_length=765)
-    class Meta:
-        db_table = u'plugin_manager_taxonomy'
-
-class Role(models.Model):
-    rid = models.IntegerField(primary_key=True)
-    name = models.CharField(unique=True, max_length=192)
-    class Meta:
-        db_table = u'role'
-
-class SearchDataset(models.Model):
-    sid = models.IntegerField(unique=True)
-    type = models.CharField(unique=True, max_length=48, blank=True)
-    data = models.TextField()
-    reindex = models.IntegerField()
-    class Meta:
-        db_table = u'search_dataset'
-
-class SearchIndex(models.Model):
-    word = models.CharField(max_length=150)
-    sid = models.IntegerField()
-    type = models.CharField(max_length=48, blank=True)
-    score = models.FloatField(null=True, blank=True)
-    class Meta:
-        db_table = u'search_index'
-
-class SearchNodeLinks(models.Model):
-    sid = models.IntegerField(primary_key=True)
-    type = models.CharField(max_length=48, primary_key=True)
-    nid = models.IntegerField()
-    caption = models.TextField(blank=True)
-    class Meta:
-        db_table = u'search_node_links'
-
-class SearchTotal(models.Model):
-    word = models.CharField(max_length=150, primary_key=True)
-    count = models.FloatField(null=True, blank=True)
-    class Meta:
-        db_table = u'search_total'
-
-class Sessions(models.Model):
-    uid = models.IntegerField()
-    sid = models.CharField(max_length=192, primary_key=True)
-    hostname = models.CharField(max_length=384)
-    timestamp = models.IntegerField()
-    cache = models.IntegerField()
-    session = models.TextField(blank=True)
-    class Meta:
-        db_table = u'sessions'
-
-class System(models.Model):
-    filename = models.CharField(max_length=765)
-    name = models.CharField(max_length=765)
-    type = models.CharField(max_length=765)
-    owner = models.CharField(max_length=765)
-    status = models.IntegerField()
-    throttle = models.IntegerField()
-    bootstrap = models.IntegerField()
-    schema_version = models.IntegerField()
-    weight = models.IntegerField()
-    info = models.TextField(blank=True)
-    class Meta:
-        db_table = u'system'
-
-class TermData(models.Model):
-    tid = models.IntegerField(primary_key=True)
-    vid = models.IntegerField()
-    name = models.CharField(max_length=765)
-    description = models.TextField(blank=True)
-    weight = models.IntegerField()
-    class Meta:
-        db_table = u'term_data'
-
-class TermHierarchy(models.Model):
-    tid = models.IntegerField(primary_key=True)
-    parent = models.IntegerField()
-    class Meta:
-        db_table = u'term_hierarchy'
-
-class TermNode(models.Model):
-    nid = models.IntegerField()
-    vid = models.IntegerField()
-    tid = models.IntegerField(primary_key=True)
-    class Meta:
-        db_table = u'term_node'
-
-class TermRelation(models.Model):
-    trid = models.IntegerField(primary_key=True)
-    tid1 = models.IntegerField(unique=True)
-    tid2 = models.IntegerField()
-    class Meta:
-        db_table = u'term_relation'
-
-class TermSynonym(models.Model):
-    tsid = models.IntegerField(primary_key=True)
-    tid = models.IntegerField()
-    name = models.CharField(max_length=765)
-    class Meta:
-        db_table = u'term_synonym'
-
-class TinymceRole(models.Model):
-    name = models.CharField(max_length=384, primary_key=True)
-    rid = models.IntegerField(primary_key=True)
-    class Meta:
-        db_table = u'tinymce_role'
-
-class TinymceSettings(models.Model):
-    name = models.CharField(max_length=384, primary_key=True)
-    settings = models.TextField(blank=True)
-    class Meta:
-        db_table = u'tinymce_settings'
-
-class Upload(models.Model):
-    fid = models.IntegerField()
-    nid = models.IntegerField()
-    vid = models.IntegerField(primary_key=True)
-    description = models.CharField(max_length=765)
-    list = models.IntegerField()
-    weight = models.IntegerField()
-    class Meta:
-        db_table = u'upload'
-
-class UrlAlias(models.Model):
-    pid = models.IntegerField(primary_key=True)
-    src = models.CharField(max_length=384)
-    dst = models.CharField(unique=True, max_length=384)
-    language = models.CharField(unique=True, max_length=36)
-    class Meta:
-        db_table = u'url_alias'
-
-class Users(models.Model):
-    uid = models.IntegerField(primary_key=True)
-    name = models.CharField(unique=True, max_length=180)
-    pass_field = models.CharField(max_length=96, db_column='pass') # Field renamed because it was a Python reserved word. Field name made lowercase.
-    mail = models.CharField(max_length=192, blank=True)
-    mode = models.IntegerField()
-    sort = models.IntegerField(null=True, blank=True)
-    threshold = models.IntegerField(null=True, blank=True)
-    theme = models.CharField(max_length=765)
-    signature = models.CharField(max_length=765)
-    created = models.IntegerField()
-    access = models.IntegerField()
-    login = models.IntegerField()
-    status = models.IntegerField()
-    timezone = models.CharField(max_length=24, blank=True)
-    language = models.CharField(max_length=36)
-    picture = models.CharField(max_length=765)
-    init = models.CharField(max_length=192, blank=True)
-    data = models.TextField(blank=True)
-    class Meta:
-        db_table = u'users'
-
-class UsersRoles(models.Model):
-    uid = models.IntegerField(primary_key=True)
-    rid = models.IntegerField()
-    class Meta:
-        db_table = u'users_roles'
-
-class Variable(models.Model):
-    name = models.CharField(max_length=384, primary_key=True)
-    value = models.TextField()
-    class Meta:
-        db_table = u'variable'
-
-class ViewsDisplay(models.Model):
-    vid = models.IntegerField()
-    id = models.CharField(max_length=192, primary_key=True)
-    display_title = models.CharField(max_length=192)
-    display_plugin = models.CharField(max_length=192)
-    position = models.IntegerField(null=True, blank=True)
-    display_options = models.TextField(blank=True)
-    class Meta:
-        db_table = u'views_display'
-
-class ViewsObjectCache(models.Model):
-    sid = models.CharField(max_length=192, blank=True)
-    name = models.CharField(max_length=96, blank=True)
-    obj = models.CharField(max_length=96, blank=True)
-    updated = models.IntegerField()
-    data = models.TextField(blank=True)
-    class Meta:
-        db_table = u'views_object_cache'
-
-class ViewsView(models.Model):
-    vid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=96)
-    description = models.CharField(max_length=765, blank=True)
-    tag = models.CharField(max_length=765, blank=True)
-    view_php = models.TextField(blank=True)
-    base_table = models.CharField(max_length=96)
-    is_cacheable = models.IntegerField(null=True, blank=True)
-    class Meta:
-        db_table = u'views_view'
-
-class Vocabulary(models.Model):
-    vid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=765)
-    description = models.TextField(blank=True)
-    help = models.CharField(max_length=765)
-    relations = models.IntegerField()
-    hierarchy = models.IntegerField()
-    multiple = models.IntegerField()
-    required = models.IntegerField()
-    tags = models.IntegerField()
-    module = models.CharField(max_length=765)
-    weight = models.IntegerField()
-    class Meta:
-        db_table = u'vocabulary'
-
-class VocabularyNodeTypes(models.Model):
-    vid = models.IntegerField()
-    type = models.CharField(max_length=96, primary_key=True)
-    class Meta:
-        db_table = u'vocabulary_node_types'
-
-class VotingapiCache(models.Model):
-    vote_cache_id = models.IntegerField(primary_key=True)
-    content_type = models.CharField(max_length=192)
-    content_id = models.IntegerField()
-    value = models.FloatField()
-    value_type = models.CharField(max_length=192)
-    tag = models.CharField(max_length=192)
-    function = models.CharField(max_length=192)
-    timestamp = models.IntegerField()
-    class Meta:
-        db_table = u'votingapi_cache'
-
-class VotingapiVote(models.Model):
-    vote_id = models.IntegerField(primary_key=True)
-    content_type = models.CharField(max_length=192)
-    content_id = models.IntegerField()
-    value = models.FloatField()
-    value_type = models.CharField(max_length=192)
-    tag = models.CharField(max_length=192)
-    uid = models.IntegerField()
-    timestamp = models.IntegerField()
-    vote_source = models.CharField(max_length=765, blank=True)
-    class Meta:
-        db_table = u'votingapi_vote'
-
-class Watchdog(models.Model):
-    wid = models.IntegerField(primary_key=True)
-    uid = models.IntegerField()
-    type = models.CharField(max_length=48)
-    message = models.TextField()
-    variables = models.TextField()
-    severity = models.IntegerField()
-    link = models.CharField(max_length=765)
-    location = models.TextField()
-    referer = models.CharField(max_length=384)
-    hostname = models.CharField(max_length=384)
-    timestamp = models.IntegerField()
-    class Meta:
-        db_table = u'watchdog'
-
-class Weblinks(models.Model):
-    nid = models.IntegerField(primary_key=True)
-    vid = models.IntegerField(primary_key=True)
-    click_count = models.IntegerField()
-    last_click = models.IntegerField(null=True, blank=True)
-    weight = models.IntegerField()
-    last_status = models.CharField(max_length=12, blank=True)
-    last_checked = models.IntegerField(null=True, blank=True)
-    urlhash = models.CharField(max_length=96)
-    url = models.TextField()
-    reciprocal = models.TextField(blank=True)
-    class Meta:
-        db_table = u'weblinks'
-
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Float
+
+Base = declarative_base()
+
+
+class Access(Base):
+    __tablename__ = u'access'
+    aid = Column(Integer, primary_key=True)
+    mask = Column(String(765))
+    type = Column(String(765))
+    status = Column(Integer)
+
+
+class Accesslog(Base):
+    __tablename__ = u'accesslog'
+    aid = Column(Integer, primary_key=True)
+    sid = Column(String(192))
+    title = Column(String(765))
+    path = Column(String(765))
+    url = Column(String(765))
+    hostname = Column(String(384))
+    uid = Column(Integer)
+    timer = Column(Integer)
+    timestamp = Column(Integer)
+
+
+class Actions(Base):
+    __tablename__ = u'actions'
+    aid = Column(String(765), primary_key=True)
+    type = Column(String(96))
+    callback = Column(String(765))
+    parameters = Column(String)
+    description = Column(String(765))
+
+
+class ActionsAid(Base):
+    __tablename__ = u'actions_aid'
+    aid = Column(Integer, primary_key=True)
+
+
+class AdvancedHelpIndex(Base):
+    __tablename__ = u'advanced_help_index'
+    sid = Column(Integer, primary_key=True)
+    module = Column(String(765))
+    topic = Column(String(765))
+    language = Column(String(36))
+
+
+class AggregatorCategory(Base):
+    __tablename__ = u'aggregator_category'
+    cid = Column(Integer, primary_key=True)
+    title = Column(String(765))
+    description = Column(String)
+    block = Column(Integer)
+
+
+class AggregatorCategoryFeed(Base):
+    __tablename__ = u'aggregator_category_feed'
+    fid = Column(Integer)
+    cid = Column(Integer, primary_key=True)
+
+
+class AggregatorCategoryItem(Base):
+    __tablename__ = u'aggregator_category_item'
+    iid = Column(Integer)
+    cid = Column(Integer, primary_key=True)
+
+
+class AggregatorFeed(Base):
+    __tablename__ = u'aggregator_feed'
+    fid = Column(Integer, primary_key=True)
+    title = Column(String(765))
+    url = Column(String(765))
+    refresh = Column(Integer)
+    checked = Column(Integer)
+    link = Column(String(765))
+    description = Column(String)
+    image = Column(String)
+    etag = Column(String(765))
+    modified = Column(Integer)
+    block = Column(Integer)
+
+
+class AggregatorItem(Base):
+    __tablename__ = u'aggregator_item'
+    iid = Column(Integer, primary_key=True)
+    fid = Column(Integer)
+    title = Column(String(765))
+    link = Column(String(765))
+    author = Column(String(765))
+    description = Column(String)
+    timestamp = Column(Integer)
+    guid = Column(String(765))
+
+
+class Authmap(Base):
+    __tablename__ = u'authmap'
+    aid = Column(Integer, primary_key=True)
+    uid = Column(Integer)
+    authname = Column(String(384))
+    module = Column(String(384))
+
+
+class Batch(Base):
+    __tablename__ = u'batch'
+    bid = Column(Integer, primary_key=True)
+    token = Column(String(192))
+    timestamp = Column(Integer)
+    batch = Column(String)
+
+
+class Blocks(Base):
+    __tablename__ = u'blocks'
+    bid = Column(Integer, primary_key=True)
+    module = Column(String(192))
+    delta = Column(String(96))
+    theme = Column(String(192))
+    status = Column(Integer)
+    weight = Column(Integer)
+    region = Column(String(192))
+    custom = Column(Integer)
+    throttle = Column(Integer)
+    visibility = Column(Integer)
+    pages = Column(String)
+    title = Column(String(192))
+    cache = Column(Integer)
+
+
+class BlocksRoles(Base):
+    __tablename__ = u'blocks_roles'
+    module = Column(String(192), primary_key=True)
+    delta = Column(String(96), primary_key=True)
+    rid = Column(Integer)
+
+
+class BlogapiFiles(Base):
+    __tablename__ = u'blogapi_files'
+    fid = Column(Integer, primary_key=True)
+    uid = Column(Integer)
+    filepath = Column(String(765))
+    filesize = Column(Integer)
+
+
+class Boxes(Base):
+    __tablename__ = u'boxes'
+    bid = Column(Integer, primary_key=True)
+    body = Column(String)
+    info = Column(String(384))
+    format = Column(Integer)
+
+
+class Cache(Base):
+    __tablename__ = u'cache'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheAdminMenu(Base):
+    __tablename__ = u'cache_admin_menu'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheBlock(Base):
+    __tablename__ = u'cache_block'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheContent(Base):
+    __tablename__ = u'cache_content'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheFilter(Base):
+    __tablename__ = u'cache_filter'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheForm(Base):
+    __tablename__ = u'cache_form'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheMenu(Base):
+    __tablename__ = u'cache_menu'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CachePage(Base):
+    __tablename__ = u'cache_page'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheUpdate(Base):
+    __tablename__ = u'cache_update'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class CacheViews(Base):
+    __tablename__ = u'cache_views'
+    cid = Column(String(765), primary_key=True)
+    data = Column(String)
+    expire = Column(Integer)
+    created = Column(Integer)
+    headers = Column(String)
+    serialized = Column(Integer)
+
+
+class Comments(Base):
+    __tablename__ = u'comments'
+    cid = Column(Integer, primary_key=True)
+    pid = Column(Integer)
+    nid = Column(Integer)
+    uid = Column(Integer)
+    subject = Column(String(192))
+    comment = Column(String)
+    hostname = Column(String(384))
+    timestamp = Column(Integer)
+    status = Column(Integer)
+    format = Column(Integer)
+    thread = Column(String(765))
+    name = Column(String(180))
+    mail = Column(String(192))
+    homepage = Column(String(765))
+
+
+class Contact(Base):
+    __tablename__ = u'contact'
+    cid = Column(Integer, primary_key=True)
+    category = Column(String(765))
+    recipients = Column(String)
+    reply = Column(String)
+    weight = Column(Integer)
+    selected = Column(Integer)
+
+
+class ContentNodeField(Base):
+    __tablename__ = u'content_node_field'
+    field_name = Column(String(96), primary_key=True)
+    type = Column(String(381))
+    global_settings = Column(String)
+    required = Column(Integer)
+    multiple = Column(Integer)
+    db_storage = Column(Integer)
+    module = Column(String(381))
+    db_columns = Column(String)
+    active = Column(Integer)
+    locked = Column(Integer)
+
+
+class ContentNodeFieldInstance(Base):
+    __tablename__ = u'content_node_field_instance'
+    field_name = Column(String(96), primary_key=True)
+    type_name = Column(String(96), primary_key=True)
+    weight = Column(Integer)
+    label = Column(String(765))
+    widget_type = Column(String(96))
+    widget_settings = Column(String)
+    display_settings = Column(String)
+    description = Column(String)
+    widget_module = Column(String(381))
+    widget_active = Column(Integer)
+
+
+class ContentTypeProject(Base):
+    __tablename__ = u'content_type_project'
+    vid = Column(Integer, primary_key=True)
+    nid = Column(Integer)
+    field_link_url = Column(String(765))
+    field_link_title = Column(String(765))
+    field_link_attributes = Column(String)
+    field_source_url = Column(String(765))
+    field_source_title = Column(String(765))
+    field_source_attributes = Column(String)
+
+
+class DevelQueries(Base):
+    __tablename__ = u'devel_queries'
+    qid = Column(Integer)
+    function = Column(String(765))
+    query = Column(String)
+    hash = Column(String(765), primary_key=True)
+
+
+class DevelTimes(Base):
+    __tablename__ = u'devel_times'
+    tid = Column(Integer, primary_key=True)
+    qid = Column(Integer)
+    time = Column(Float)
+
+
+class Feedburner(Base):
+    __tablename__ = u'feedburner'
+    path = Column(String(384), primary_key=True)
+    feedburner = Column(String(300))
+
+
+class Files(Base):
+    __tablename__ = u'files'
+    fid = Column(Integer, primary_key=True)
+    uid = Column(Integer)
+    filename = Column(String(765))
+    filepath = Column(String(765))
+    filemime = Column(String(765))
+    filesize = Column(Integer)
+    status = Column(Integer)
+    timestamp = Column(Integer)
+
+
+class FilterFormats(Base):
+    __tablename__ = u'filter_formats'
+    format = Column(Integer, primary_key=True)
+    name = Column(String(765))
+    roles = Column(String(765))
+    cache = Column(Integer)
+
+
+class Filters(Base):
+    __tablename__ = u'filters'
+    fid = Column(Integer, primary_key=True)
+    format = Column(Integer)
+    module = Column(String(192))
+    delta = Column(Integer)
+    weight = Column(Integer)
+
+
+class Flood(Base):
+    __tablename__ = u'flood'
+    fid = Column(Integer, primary_key=True)
+    event = Column(String(192))
+    hostname = Column(String(384))
+    timestamp = Column(Integer)
+
+
+class History(Base):
+    __tablename__ = u'history'
+    uid = Column(Integer, primary_key=True)
+    nid = Column(Integer)
+    timestamp = Column(Integer)
+
+
+class Image(Base):
+    __tablename__ = u'image'
+    nid = Column(Integer, primary_key=True)
+    fid = Column(Integer)
+    image_size = Column(String(96))
+
+
+class ImageAttach(Base):
+    __tablename__ = u'image_attach'
+    nid = Column(Integer, primary_key=True)
+    iid = Column(Integer)
+
+
+class Languages(Base):
+    __tablename__ = u'languages'
+    language = Column(String(36), primary_key=True)
+    name = Column(String(192))
+    native = Column(String(192))
+    direction = Column(Integer)
+    enabled = Column(Integer)
+    plurals = Column(Integer)
+    formula = Column(String(384))
+    domain = Column(String(384))
+    prefix = Column(String(384))
+    weight = Column(Integer)
+    javascript = Column(String(96))
+
+
+class LocalesSource(Base):
+    __tablename__ = u'locales_source'
+    lid = Column(Integer, primary_key=True)
+    location = Column(String(765))
+    textgroup = Column(String(765))
+    source = Column(String)
+    version = Column(String(60))
+
+
+class LocalesTarget(Base):
+    __tablename__ = u'locales_target'
+    lid = Column(Integer)
+    translation = Column(String)
+    language = Column(String(36), primary_key=True)
+    plid = Column(Integer)
+    plural = Column(Integer)
+
+
+class MenuCustom(Base):
+    __tablename__ = u'menu_custom'
+    menu_name = Column(String(96), primary_key=True)
+    title = Column(String(765))
+    description = Column(String)
+
+
+class MenuLinks(Base):
+    __tablename__ = u'menu_links'
+    menu_name = Column(String(96))
+    mlid = Column(Integer, primary_key=True)
+    plid = Column(Integer)
+    link_path = Column(String(765))
+    router_path = Column(String(765))
+    link_title = Column(String(765))
+    options = Column(String)
+    module = Column(String(765))
+    hidden = Column(Integer)
+    external = Column(Integer)
+    has_children = Column(Integer)
+    expanded = Column(Integer)
+    weight = Column(Integer)
+    depth = Column(Integer)
+    customized = Column(Integer)
+    p1 = Column(Integer)
+    p2 = Column(Integer)
+    p3 = Column(Integer)
+    p4 = Column(Integer)
+    p5 = Column(Integer)
+    p6 = Column(Integer)
+    p7 = Column(Integer)
+    p8 = Column(Integer)
+    p9 = Column(Integer)
+    updated = Column(Integer)
+
+
+class MenuRouter(Base):
+    __tablename__ = u'menu_router'
+    path = Column(String(765), primary_key=True)
+    load_functions = Column(String(765))
+    to_arg_functions = Column(String(765))
+    access_callback = Column(String(765))
+    access_arguments = Column(String)
+    page_callback = Column(String(765))
+    page_arguments = Column(String)
+    fit = Column(Integer)
+    number_parts = Column(Integer)
+    tab_parent = Column(String(765))
+    tab_root = Column(String(765))
+    title = Column(String(765))
+    title_callback = Column(String(765))
+    title_arguments = Column(String(765))
+    type = Column(Integer)
+    block_callback = Column(String(765))
+    description = Column(String)
+    position = Column(String(765))
+    weight = Column(Integer)
+    file = Column(String)
+
+
+class Node(Base):
+    __tablename__ = u'node'
+    nid = Column(Integer, primary_key=True)
+    vid = Column(Integer, unique=True)
+    type = Column(String(96))
+    language = Column(String(36))
+    title = Column(String(765))
+    uid = Column(Integer)
+    status = Column(Integer)
+    created = Column(Integer)
+    changed = Column(Integer)
+    comment = Column(Integer)
+    promote = Column(Integer)
+    moderate = Column(Integer)
+    sticky = Column(Integer)
+    tnid = Column(Integer)
+    translate = Column(Integer)
+
+    def __repr__(self):
+        return self.title
+
+
+class NodeAccess(Base):
+    __tablename__ = u'node_access'
+    nid = Column(Integer, primary_key=True)
+    gid = Column(Integer, primary_key=True)
+    realm = Column(String(765), primary_key=True)
+    grant_view = Column(Integer)
+    grant_update = Column(Integer)
+    grant_delete = Column(Integer)
+
+
+class NodeCommentStatistics(Base):
+    __tablename__ = u'node_comment_statistics'
+    nid = Column(Integer, primary_key=True)
+    last_comment_timestamp = Column(Integer)
+    last_comment_name = Column(String(180))
+    last_comment_uid = Column(Integer)
+    comment_count = Column(Integer)
+
+
+class NodeCounter(Base):
+    __tablename__ = u'node_counter'
+    nid = Column(Integer, primary_key=True)
+    totalcount = Column(Integer)
+    daycount = Column(Integer)
+    timestamp = Column(Integer)
+
+
+class NodeRevisions(Base):
+    __tablename__ = u'node_revisions'
+    nid = Column(Integer)
+    vid = Column(Integer, primary_key=True)
+    uid = Column(Integer)
+    title = Column(String(765))
+    body = Column(String)
+    teaser = Column(String)
+    log = Column(String)
+    timestamp = Column(Integer)
+    format = Column(Integer)
+
+
+class NodeType(Base):
+    __tablename__ = u'node_type'
+    type = Column(String(96), primary_key=True)
+    name = Column(String(765))
+    module = Column(String(765))
+    description = Column(String)
+    help = Column(String)
+    has_title = Column(Integer)
+    title_label = Column(String(765))
+    has_body = Column(Integer)
+    body_label = Column(String(765))
+    min_word_count = Column(Integer)
+    custom = Column(Integer)
+    modified = Column(Integer)
+    locked = Column(Integer)
+    orig_type = Column(String(765))
+
+
+class NodewordsAttributes(Base):
+    __tablename__ = u'nodewords_attributes'
+    attid = Column(Integer, primary_key=True)
+    tagid = Column(Integer)
+    name = Column(String(96))
+    value = Column(String(384))
+    weight = Column(Integer)
+
+
+class NodewordsContentNode(Base):
+    __tablename__ = u'nodewords_content_node'
+    tagid = Column(Integer, primary_key=True)
+    nid = Column(Integer)
+    vid = Column(Integer, primary_key=True)
+    delta = Column(Integer)
+    value = Column(String)
+
+
+class NodewordsDefaults(Base):
+    __tablename__ = u'nodewords_defaults'
+    tagid = Column(Integer, primary_key=True)
+    context = Column(String(192), primary_key=True)
+    value = Column(String)
+    enabled = Column(Integer)
+    editable = Column(Integer)
+
+
+class NodewordsTags(Base):
+    __tablename__ = u'nodewords_tags'
+    tagid = Column(Integer, primary_key=True)
+    type = Column(String(48))
+    name = Column(String(96))
+    description = Column(String(384))
+    widget = Column(String(48))
+    widget_options = Column(String)
+    options = Column(String)
+    weight = Column(Integer)
+
+
+class PageTitle(Base):
+    __tablename__ = u'page_title'
+    nid = Column(Integer, primary_key=True)
+    page_title = Column(String(765))
+
+
+class Permission(Base):
+    __tablename__ = u'permission'
+    pid = Column(Integer, primary_key=True)
+    rid = Column(Integer)
+    perm = Column(String)
+    tid = Column(Integer)
+
+
+class PluginManagerQueue(Base):
+    __tablename__ = u'plugin_manager_queue'
+    short_name = Column(String(765), primary_key=True)
+
+
+class PluginManagerRepository(Base):
+    __tablename__ = u'plugin_manager_repository'
+    title = Column(String(765))
+    short_name = Column(String(765), primary_key=True)
+    links = Column(String(765))
+
+
+class PluginManagerTaxonomy(Base):
+    __tablename__ = u'plugin_manager_taxonomy'
+    short_name = Column(String(765), primary_key=True)
+    tag = Column(String(765), primary_key=True)
+
+
+class Role(Base):
+    __tablename__ = u'role'
+    rid = Column(Integer, primary_key=True)
+    name = Column(String(192))
+
+
+class SearchDataset(Base):
+    __tablename__ = u'search_dataset'
+    sid = Column(Integer, unique=True, primary_key=True)
+    type = Column(String(48))
+    data = Column(String)
+    reindex = Column(Integer)
+
+
+class SearchIndex(Base):
+    __tablename__ = u'search_index'
+    sid = Column(Integer, primary_key=True)
+    word = Column(String(150))
+    type = Column(String(48))
+    score = Column(Float)
+
+
+class SearchNodeLinks(Base):
+    __tablename__ = u'search_node_links'
+    sid = Column(Integer, primary_key=True)
+    type = Column(String(48), primary_key=True)
+    nid = Column(Integer)
+    caption = Column(String)
+
+
+class SearchTotal(Base):
+    __tablename__ = u'search_total'
+    word = Column(String(150), primary_key=True)
+    count = Column(Float)
+
+
+class Sessions(Base):
+    __tablename__ = u'sessions'
+    uid = Column(Integer)
+    sid = Column(String(192), primary_key=True)
+    hostname = Column(String(384))
+    timestamp = Column(Integer)
+    cache = Column(Integer)
+    session = Column(String)
+
+
+class System(Base):
+    __tablename__ = u'system'
+    filename = Column(String(765), primary_key=True)
+    name = Column(String(765))
+    type = Column(String(765))
+    owner = Column(String(765))
+    status = Column(Integer)
+    throttle = Column(Integer)
+    bootstrap = Column(Integer)
+    schema_version = Column(Integer)
+    weight = Column(Integer)
+    info = Column(String)
+
+
+class TermData(Base):
+    __tablename__ = u'term_data'
+    tid = Column(Integer, primary_key=True)
+    vid = Column(Integer)
+    name = Column(String(765))
+    description = Column(String)
+    weight = Column(Integer)
+
+
+class TermHierarchy(Base):
+    __tablename__ = u'term_hierarchy'
+    tid = Column(Integer, primary_key=True)
+    parent = Column(Integer)
+
+
+class TermNode(Base):
+    __tablename__ = u'term_node'
+    nid = Column(Integer)
+    vid = Column(Integer)
+    tid = Column(Integer, primary_key=True)
+
+
+class TermRelation(Base):
+    __tablename__ = u'term_relation'
+    trid = Column(Integer, primary_key=True)
+    tid1 = Column(Integer, unique=True)
+    tid2 = Column(Integer)
+
+
+class TermSynonym(Base):
+    __tablename__ = u'term_synonym'
+    tsid = Column(Integer, primary_key=True)
+    tid = Column(Integer)
+    name = Column(String(765))
+
+
+class TinymceRole(Base):
+    __tablename__ = u'tinymce_role'
+    name = Column(String(384), primary_key=True)
+    rid = Column(Integer, primary_key=True)
+
+
+class TinymceSettings(Base):
+    __tablename__ = u'tinymce_settings'
+    name = Column(String(384), primary_key=True)
+    settings = Column(String)
+
+
+class Upload(Base):
+    __tablename__ = u'upload'
+    fid = Column(Integer)
+    nid = Column(Integer)
+    vid = Column(Integer, primary_key=True)
+    description = Column(String(765))
+    list = Column(Integer)
+    weight = Column(Integer)
+
+
+class UrlAlias(Base):
+    __tablename__ = u'url_alias'
+    pid = Column(Integer, primary_key=True)
+    src = Column(String(384))
+    dst = Column(String(384))
+    language = Column(String(36))
+
+
+class Users(Base):
+    __tablename__ = u'users'
+    uid = Column(Integer, primary_key=True)
+    name = Column(String(180))
+    pass_field = Column('pass', String(96))  # Field renamed because it was a Python reserved word. Field name made lowercase.
+    mail = Column(String(192))
+    mode = Column(Integer)
+    sort = Column(Integer)
+    threshold = Column(Integer)
+    theme = Column(String(765))
+    signature = Column(String(765))
+    created = Column(Integer)
+    access = Column(Integer)
+    login = Column(Integer)
+    status = Column(Integer)
+    timezone = Column(String(24))
+    language = Column(String(36))
+    picture = Column(String(765))
+    init = Column(String(192))
+    data = Column(String)
+
+    def __repr__(self):
+        return self.name
+
+
+class UsersRoles(Base):
+    __tablename__ = u'users_roles'
+    uid = Column(Integer, primary_key=True)
+    rid = Column(Integer)
+
+
+class Variable(Base):
+    __tablename__ = u'variable'
+    name = Column(String(384), primary_key=True)
+    value = Column(String)
+
+
+class ViewsDisplay(Base):
+    __tablename__ = u'views_display'
+    vid = Column(Integer)
+    id = Column(String(192), primary_key=True)
+    display_title = Column(String(192))
+    display_plugin = Column(String(192))
+    position = Column(Integer)
+    display_options = Column(String)
+
+
+class ViewsObjectCache(Base):
+    __tablename__ = u'views_object_cache'
+    sid = Column(String(192), primary_key=True)
+    name = Column(String(96))
+    obj = Column(String(96))
+    updated = Column(Integer)
+    data = Column(String)
+
+
+class ViewsView(Base):
+    __tablename__ = u'views_view'
+    vid = Column(Integer, primary_key=True)
+    name = Column(String(96))
+    description = Column(String(765))
+    tag = Column(String(765))
+    view_php = Column(String)
+    base_table = Column(String(96))
+    is_cacheable = Column(Integer)
+
+
+class Vocabulary(Base):
+    __tablename__ = u'vocabulary'
+    vid = Column(Integer, primary_key=True)
+    name = Column(String(765))
+    description = Column(String)
+    help = Column(String(765))
+    relations = Column(Integer)
+    hierarchy = Column(Integer)
+    multiple = Column(Integer)
+    required = Column(Integer)
+    tags = Column(Integer)
+    module = Column(String(765))
+    weight = Column(Integer)
+
+
+class VocabularyNodeTypes(Base):
+    __tablename__ = u'vocabulary_node_types'
+    vid = Column(Integer)
+    type = Column(String(96), primary_key=True)
+
+
+class VotingapiCache(Base):
+    __tablename__ = u'votingapi_cache'
+    vote_cache_id = Column(Integer, primary_key=True)
+    content_type = Column(String(192))
+    content_id = Column(Integer)
+    value = Column(Float)
+    value_type = Column(String(192))
+    tag = Column(String(192))
+    function = Column(String(192))
+    timestamp = Column(Integer)
+
+
+class VotingapiVote(Base):
+    __tablename__ = u'votingapi_vote'
+    vote_id = Column(Integer, primary_key=True)
+    content_type = Column(String(192))
+    content_id = Column(Integer)
+    value = Column(Float)
+    value_type = Column(String(192))
+    tag = Column(String(192))
+    uid = Column(Integer)
+    timestamp = Column(Integer)
+    vote_source = Column(String(765))
+
+
+class Watchdog(Base):
+    __tablename__ = u'watchdog'
+    wid = Column(Integer, primary_key=True)
+    uid = Column(Integer)
+    type = Column(String(48))
+    message = Column(String)
+    variables = Column(String)
+    severity = Column(Integer)
+    link = Column(String(765))
+    location = Column(String)
+    referer = Column(String(384))
+    hostname = Column(String(384))
+    timestamp = Column(Integer)
+
+
+class Weblinks(Base):
+    __tablename__ = u'weblinks'
+    nid = Column(Integer, primary_key=True)
+    vid = Column(Integer, primary_key=True)
+    click_count = Column(Integer)
+    last_click = Column(Integer)
+    weight = Column(Integer)
+    last_status = Column(String(12))
+    last_checked = Column(Integer)
+    urlhash = Column(String(96))
+    url = Column(String)
+    reciprocal = Column(String)
