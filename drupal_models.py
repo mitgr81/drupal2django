@@ -956,7 +956,12 @@ class ContentTypeImage(Base):
     fid = Column(Integer)
 
     # SQL for 'imageview':
-    # create view imageview as select node.nid, node.vid, node.title, files.filemime, files.filepath, files.filename, files.fid, og_ancestry.group_nid as site_id from content_type_image left join content_field_image_element using (vid) left join node on content_type_image.nid = node.nid left join files on content_field_image_element.field_image_element_fid = files.fid left join og_ancestry on node.nid = og_ancestry.nid;
+    """create view imageview as select node.nid, node.vid, node.title, files.filemime, files.filepath, files.filename, files.fid, og_ancestry.group_nid as site_id
+         from content_type_image
+        left join content_field_image_element using (vid)
+        left join node on content_type_image.nid = node.nid
+        left join files on content_field_image_element.field_image_element_fid = files.fid
+        left join og_ancestry on node.nid = og_ancestry.nid;"""
 
     def __unicode__(self):
         return self.title
@@ -965,24 +970,28 @@ class ContentTypeImage(Base):
 
 class PropertyUsers(Base):
     __tablename__ = u'property_users'  # TODO: figure out how to create this view dynamically/if it's not there.
-    id = Column('uid', Integer, primary_key=True)
-    site_nid = Column(Integer, )
+    uid = Column(Integer, ForeignKey('users.uid'), primary_key=True)
+    site_nid = Column(Integer, ForeignKey('content_type_site.nid'))
     property_id = Column(String(255))
-
-    # SQL for 'property_users':
-    # create view property_users as select uid, nid site_nid, field_site_id_value property_id from og_uid join content_type_site using(nid);
+    node = relationship("ContentTypeSite")
+    user = relationship("Users")
 
     def __unicode__(self):
-        return u'<Uid: {}, Site: {}>'.format(self.id, self.property_id)
+        return u'<Uid: {}, Site: {}>'.format(self.user.name, self.property_id)
     __repr__ = __str__ = __unicode__
 
 if __name__ == '__main__':
     import os
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
-    session = sessionmaker(bind=create_engine(os.environ['SQLALCHEMY_DRUPAL_CONNECT_STRING']))()
-    print(session.query(Node).all())
-    print(session.query(Users).all())
-    print(session.query(ContentTypeImage).all())
-    print(session.query(ContentTypeSite).all())
+    session = sessionmaker(bind=create_engine(os.environ['SQLALCHEMY_DRUPAL_CONNECT_STRING'], echo=False))()
+    # print "Nodes",
+    # print(session.query(Node).all())
+    # print "Users",
+    # print(session.query(Users).all())
+    # print "Content Type Images",
+    # print(session.query(ContentTypeImage).all())
+    # print "Content Type Site",
+    # print(session.query(ContentTypeSite).all())
+    print "Property Users",
     print(session.query(PropertyUsers).all())
