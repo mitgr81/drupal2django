@@ -1,26 +1,18 @@
-Migrate Drupal to Django
-========================
+Migrate Drupal to SQLAlchemy
+============================
 
-This is an app which migrates a drupal blog to django, with a focus on
-minimizing loss -- all old urls are mapped (through contrib.redirect) to the
-new posts, so no SEO value is lost.
+This is a simple module which maps a drupal site's database to a set of SQLAlchemy models.
 
 Works:
 
-- post migration to basic.blog models
-- url redirect mapping, both from the /node/# url and whatever extra redirect
-  url you had
-- user migration
+- Database table to Model Mapping (unsubstantiated claim)
 
 TODO:
 
-- comments migration
-- flatpage migration
-- menu migration
-- more configuration
-    + import nodes of more types (not just Post)
-    + export to more than just basic.blog
-    + fine grained user control
-- copy images and linked files
-- be aware of CCK fields
+- More useful things!
 
+HOWTODOIT:
+
+- export a Connection String::
+
+    export SQLALCHEMY_DRUPAL_CONNECT_STRING='mysql://user:pass@myawesomeserver.example.com/drupal_database'

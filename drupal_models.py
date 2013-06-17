@@ -19,7 +19,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.'''
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -926,3 +927,62 @@ class Weblinks(Base):
     urlhash = Column(String(96))
     url = Column(String)
     reciprocal = Column(String)
+
+
+class ContentTypeSite(Base):
+    __tablename__ = u'content_type_site'
+    revisions = Column('vid', Integer, ForeignKey('node.vid'), primary_key=True)
+    nid = Column('nid', Integer, ForeignKey('node.nid'))
+    industry_type = Column('field_industry_type_value', String(765))
+    property_id = Column('field_site_id_value', String(765))
+    timezone = Column('field_timezone_value', String)
+    site_id = nid
+    node = relationship("Node", foreign_keys=[nid])
+
+    def __unicode__(self):
+        return u'{} - {}'.format(self.node.title, self.property_id)
+    __repr__ = __str__ = __unicode__
+
+
+class ContentTypeImage(Base):
+    __tablename__ = u'imageview'  # TODO: figure out how to create this view dynamically/if it's not there.
+    id = Column('nid', Integer, primary_key=True)
+    title = Column(String(255))
+    site_id = Column(Integer)
+    site = Column('site_id', Integer, ForeignKey('content_type_site.site_id'))
+    file_mime = Column('filemime', String(255))
+    file_path = Column('filepath', String(255))
+    file_name = Column('filename', String(255))
+    fid = Column(Integer)
+
+    # SQL for 'imageview':
+    # create view imageview as select node.nid, node.vid, node.title, files.filemime, files.filepath, files.filename, files.fid, og_ancestry.group_nid as site_id from content_type_image left join content_field_image_element using (vid) left join node on content_type_image.nid = node.nid left join files on content_field_image_element.field_image_element_fid = files.fid left join og_ancestry on node.nid = og_ancestry.nid;
+
+    def __unicode__(self):
+        return self.title
+    __repr__ = __str__ = __unicode__
+
+
+class PropertyUsers(Base):
+    __tablename__ = u'property_users'  # TODO: figure out how to create this view dynamically/if it's not there.
+    id = Column('uid', Integer, primary_key=True)
+    site_nid = Column(Integer, )
+    property_id = Column(String(255))
+
+    # SQL for 'property_users':
+    # create view property_users as select uid, nid site_nid, field_site_id_value property_id from og_uid join content_type_site using(nid);
+
+    def __unicode__(self):
+        return u'<Uid: {}, Site: {}>'.format(self.id, self.property_id)
+    __repr__ = __str__ = __unicode__
+
+if __name__ == '__main__':
+    import os
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    session = sessionmaker(bind=create_engine(os.environ['SQLALCHEMY_DRUPAL_CONNECT_STRING']))()
+    print(session.query(Node).all())
+    print(session.query(Users).all())
+    print(session.query(ContentTypeImage).all())
+    print(session.query(ContentTypeSite).all())
+    print(session.query(PropertyUsers).all())
