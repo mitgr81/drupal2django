@@ -18,8 +18,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.'''
 
+from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -944,54 +945,78 @@ class ContentTypeSite(Base):
     __repr__ = __str__ = __unicode__
 
 
-class ContentTypeImage(Base):
-    __tablename__ = u'imageview'  # TODO: figure out how to create this view dynamically/if it's not there.
-    id = Column('nid', Integer, primary_key=True)
-    title = Column(String(255))
-    site_id = Column(Integer)
-    site = Column('site_id', Integer, ForeignKey('content_type_site.site_id'))
-    file_mime = Column('filemime', String(255))
-    file_path = Column('filepath', String(255))
-    file_name = Column('filename', String(255))
-    fid = Column(Integer)
-
-    # SQL for 'imageview':
-    """create view imageview as select node.nid, node.vid, node.title, files.filemime, files.filepath, files.filename, files.fid, og_ancestry.group_nid as site_id
-         from content_type_image
-        left join content_field_image_element using (vid)
-        left join node on content_type_image.nid = node.nid
-        left join files on content_field_image_element.field_image_element_fid = files.fid
-        left join og_ancestry on node.nid = og_ancestry.nid;"""
+class OgAncestry(Base):
+    __tablename__ = u'og_ancestry'
+    nid = Column(Integer, ForeignKey('node.nid'), primary_key=True)
+    group_nid = Column(Integer, ForeignKey('node.nid'), primary_key=True)
+    node = relationship("Node", lazy="joined", innerjoin=True, foreign_keys=[nid])
+    site = relationship("Node", lazy="joined", innerjoin=True, foreign_keys=[group_nid])
 
     def __unicode__(self):
-        return self.title
+        return u'<<<{}: ({}) belongs to {}>>>'.format(self.nid, self.node.title, self.site.title)
     __repr__ = __str__ = __unicode__
 
 
-class PropertyUsers(Base):
-    __tablename__ = u'property_users'  # TODO: figure out how to create this view dynamically/if it's not there.
-    uid = Column(Integer, ForeignKey('users.uid'), primary_key=True)
-    site_nid = Column(Integer, ForeignKey('content_type_site.nid'))
-    property_id = Column(String(255))
-    node = relationship("ContentTypeSite")
-    user = relationship("Users")
+class ContentFieldImageElement(Base):
+    __tablename__ = u'content_field_image_element'
+    vid = Column(Integer, ForeignKey('node.vid'), primary_key=True)
+    nid = Column(Integer, ForeignKey('node.nid'))
+    fid = Column('field_image_element_fid', Integer, ForeignKey('files.fid'))
+    files = relationship("Files", lazy="joined")
+
+
+class ContentTypeImage(Base):
+    __tablename__ = u'content_type_image'  # TODO: figure out how to create this view dynamically/if it's not there.
+    vid = Column(Integer, ForeignKey('content_field_image_element.vid'), primary_key=True)
+    nid = Column(Integer, ForeignKey('node.nid'))
+    node = relationship("Node", lazy="joined", innerjoin=True)
+    image = relationship('ContentFieldImageElement', lazy="joined", innerjoin=True)
 
     def __unicode__(self):
-        return u'<Uid: {}, Site: {}>'.format(self.user.name, self.property_id)
+        return "{}->{}".format(self.node.title, self.image.files.filepath)
+    __repr__ = __str__ = __unicode__
+
+
+class OgUid(Base):
+    __tablename__ = u'og_uid'
+    nid = Column(Integer, ForeignKey('content_type_site.nid'), primary_key=True)
+    uid = Column(Integer, ForeignKey('users.uid'), primary_key=True)
+    og_role = Column(Integer, ForeignKey('roles.rid'))
+    is_active = Column(Integer)
+    is_admin = Column(Integer)
+    created = Column(DateTime, default=datetime.now)
+    changed = Column(DateTime, default=datetime.now)
+    site = relationship("ContentTypeSite", foreign_keys=[nid])
+    user = relationship("Users", lazy="joined", innerjoin=True)
+
+    def __unicode__(self):
+        return u'<Uid: {}, Site: {}>'.format(self.user.name, self.site.property_id)
     __repr__ = __str__ = __unicode__
 
 if __name__ == '__main__':
     import os
+    import time
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     session = sessionmaker(bind=create_engine(os.environ['SQLALCHEMY_DRUPAL_CONNECT_STRING'], echo=False))()
-    # print "Nodes",
-    # print(session.query(Node).all())
-    # print "Users",
-    # print(session.query(Users).all())
-    # print "Content Type Images",
-    # print(session.query(ContentTypeImage).all())
-    # print "Content Type Site",
-    # print(session.query(ContentTypeSite).all())
-    print "Property Users",
-    print(session.query(PropertyUsers).all())
+    start = time.time()
+    print "Nodes",
+    print(session.query(Node).all())
+    print "Users",
+    print(session.query(Users).all())
+    print "Content Type Images",
+    print(session.query(ContentTypeImage).all())
+    print "Content Type Site",
+    print(session.query(ContentTypeSite).all())
+    print "OG UID Map",
+    print(session.query(OgUid).all())
+    print "OG Ancestry",
+    print(session.query(OgAncestry).all())
+    import random
+    site = random.choice(["Springfield", "Bedrock"])
+    print "Images that belong to {}".format(site)
+    print session.query(ContentTypeImage).join(OgAncestry, OgAncestry.nid == ContentTypeImage.nid).filter(OgAncestry.site.has(title=site)).all()
+    user = random.choice(session.query(Users).all())
+    print "Images Accessible By {}".format(user)
+    print session.query(ContentTypeImage).join(OgAncestry, OgAncestry.nid == ContentTypeImage.nid).join(OgUid, OgUid.nid == OgAncestry.group_nid).filter(OgUid.user.has(name=user)).all()
+    print "Ran in {}".format(time.time() - start)
